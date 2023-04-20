@@ -1,3 +1,4 @@
+//Anton Orlov addec changes as required by Assighnment 4 pdf
 #ifndef BINOMIAL_QUEUE_H
 #define BINOMIAL_QUEUE_H
 
@@ -92,8 +93,13 @@ class BinomialQueue
     /**
      * Insert item x into the priority queue; allows duplicates.
      */
-    void insert( const Comparable & x )
-      { BinomialQueue oneItem{ x }; merge( oneItem ); }
+    bool insert( const Comparable & x )
+      { BinomialQueue oneItem{ x };
+        if(positions_table_.Insert(x, oneItem.theTrees[0])){
+          merge(oneItem);
+          return true;
+        }
+       merge( oneItem ); }
 
     /**
      * Insert item x into the priority queue; allows duplicates.
@@ -231,6 +237,8 @@ class BinomialQueue
         Comparable    element;
         BinomialNode *leftChild;
         BinomialNode *nextSibling;
+        BinomialNode *parent;
+      
 
         BinomialNode( const Comparable & e, BinomialNode *lt, BinomialNode *rt )
           : element{ e }, leftChild{ lt }, nextSibling{ rt } { }
@@ -240,6 +248,7 @@ class BinomialQueue
     };
 
     const static int DEFAULT_TREES = 1;
+    HashTable<Comparable, BinomialNode*> positions_table_;
 
     vector<BinomialNode *> theTrees;  // An array of tree roots
     int currentSize;                  // Number of items in the priority queue
@@ -280,6 +289,9 @@ class BinomialQueue
             return combineTrees( t2, t1 );
         t2->nextSibling = t1->leftChild;
         t1->leftChild = t2;
+
+        t2->parent_node=t1;
+        t1->parent_node=nullptr;
         return t1;
     }
 
@@ -306,6 +318,28 @@ class BinomialQueue
             return nullptr;
         else
             return new BinomialNode{ t->element, clone( t->leftChild ), clone( t->nextSibling ) };
+    }
+
+
+   bool Find( const Comparable & x ) {
+    if(isEmpty()){
+      throw UnderflowException{ };
+    else if (positions_table_.Contains(x)){
+      return true;
+    }
+    return false;
+    }
+   }
+
+    bool Remove(const Comparable & x){
+       BinomialNode * new_node = nullptr;
+       positions_table_.FInd(x, new_node);
+       if(new_node== nullptr){
+        return false;
+       }
+       else{
+        return false;
+       }
     }
 };
 

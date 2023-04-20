@@ -36,7 +36,7 @@ int NextPrime(size_t n) {
 
 
 // Quadratic probing implementation.
-template <typename HashedObj>
+template <typename HashedObj, typename HashedValue>
 class HashTable {
  public:
   enum EntryType {ACTIVE, EMPTY, DELETED};
@@ -54,13 +54,28 @@ class HashTable {
       entry.info_ = EMPTY;
   }
 
-  bool Insert(const HashedObj & x) {
+
+  bool Find(const HashedObj &key, HashedValue &found_value) const {
+    int position =FindPos(key);
+    if(IsActive(array_[position].info)){
+      found_value = array_[position].value;
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+
+
+  bool Insert(const HashedObj & x, const HashedValue &value) {
     // Insert x as active
     size_t current_pos = FindPos(x);
     if (IsActive(current_pos))
       return false;
     
     array_[current_pos].element_ = x;
+     array_[current_pos].value_=value;
     array_[current_pos].info_ = ACTIVE;
     
     // Rehash; see Section 5.5
@@ -98,6 +113,7 @@ class HashTable {
   struct HashEntry {
     HashedObj element_;
     EntryType info_;
+    HashedValue value_;
     
     HashEntry(const HashedObj& e = HashedObj{}, EntryType i = EMPTY)
     :element_{e}, info_{i} { }
